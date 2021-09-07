@@ -14,32 +14,46 @@
                 <th scope="col">Email</th>
                 <th scope="col">Phone</th>
                 <th scope="col">Staffs</th>
-                <th scope="col">Food Menu</th>
                 <th scope="col">Description</th>
                 <th scope="col">Date</th>
               </tr>
             </thead>
             <tbody>
               <tr>
-                <!-- Add Data -->
                 <%
                 set conn=Server.CreateObject("ADODB.Connection")
                 conn.Provider="Microsoft.Jet.OLEDB.4.0"
                 conn.Open "C:\inetpub\wwwroot\Restaurant\restaurant.mdb"
-                sql="INSERT INTO restaurant (rName,rEmail,rPhone,rStaff,rMenu,rDescription,rDate) "
+
+                sql="INSERT INTO restaurant (rName,rEmail,rPhone,rStaff,rDescription,rDate) "
                 sql=sql & " VALUES "
                 sql=sql & "('" & Request.Form("restaurantName") & "',"
                 sql=sql & "'" & Request.Form("restaurantEmail") & "',"
                 sql=sql & "'" & Request.Form("restaurantPhone") & "',"
                 sql=sql & "'" & Request.Form("members") & "',"
-                sql=sql & "'" & Request.Form("item") & "',"
                 sql=sql & "'" & Request.Form("description") & "',"
                 sql=sql & "'" & Request.Form("date") & "')"
-                
-                'response.write sql
-                'response.end()
+
                 'on error resume next
                 conn.Execute sql,recaffected
+
+                ' Data Add Menu Table
+                set rs=Server.CreateObject("ADODB.recordset")
+                rs.Open "SELECT MAX(ID) as id FROM restaurant", conn
+
+                id=rs("ID")
+                rs.close
+
+                menu = Split(Request.Form("item"),",")
+                
+              for each i in menu
+                  sql="INSERT INTO menu (resMenu,ResID)"
+                  sql=sql & " VALUES "
+                  sql=sql & "('" & i & "',"
+                  sql=sql & "'" & id & "')"
+                  on error resume next
+                  conn.Execute sql,recaffected
+              next
                 if err<>0 then
                   Response.Write("No update permissions!")
                 else
@@ -51,7 +65,6 @@
                 <td><%response.write(request.form("restaurantEmail"))%></td>
                 <td><%response.write(request.form("restaurantPhone"))%></td>
                 <td><%response.write(request.form("members"))%></td>
-                <td><%response.write(request.form("item"))%></td>
                 <td><%response.write(request.form("description"))%></td>
                 <td><%response.write(request.form("date"))%></td>
               </tr>

@@ -15,7 +15,6 @@
                 <th scope="col">Email</th>
                 <th scope="col">Phone</th>
                 <th scope="col">Staffs</th>
-                <th scope="col">Food Menu</th>
                 <th scope="col">Description</th>
                 <th scope="col">Date</th>
               </tr>
@@ -30,14 +29,6 @@
               set rs=Server.CreateObject("ADODB.recordset")
               rs.Open "Select * from restaurant", conn
               %>
-
-              <!-- <tr>
-                <%
-                for each x in rs.Fields
-                  response.write("<th>" & ucase(x.name) & "</th>")
-                next
-                %>
-              </tr> -->
 
               <%do until rs.EOF%>
 
@@ -57,20 +48,6 @@
                 </form>
                 <%rs.MoveNext%>
               </tr>
-
-              <!-- <tr>
-              <%for each x in rs.Fields%>
-                  <td><%Response.Write(x.value)%></td>
-              <%next
-
-              rs.MoveNext%>
-            
-              <td>
-                <a class="btn btn-warning" href="" role="button">Edit</a> |
-                <a class="btn btn-danger" href="" role="button">Delete</a>
-              </td>
-              
-              </tr> -->
               
               <%loop
               rs.close
@@ -79,6 +56,7 @@
 
             </tbody>
           </table>
+          
         </div>
     </body>
 </html>
