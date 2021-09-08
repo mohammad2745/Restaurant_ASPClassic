@@ -5,18 +5,7 @@
     </head>
     <body>
         <div class="container">
-          <nav class="navbar navbar-expand-lg navbar-light bg-light">
-            <div class="container-fluid">
-              <form class="d-flex" method="post" action="searchView.asp">
-                <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-                <button class="btn btn-outline-success" type="submit">Search</button>
-              </form>
-            </div>
-          </nav>
-
-          <!-- View Data -->
-            <a class="btn btn-primary" href="welcome.asp" role="button">HOME</a>
-            <a class="btn btn-primary" href="viewRestaurant.asp" role="button">View Restaurants</a>
+        <a class="btn btn-primary" href="viewRestaurant.asp" role="button">View Restaurants</a>
         <table class="table">
             <thead>
               <tr>
@@ -30,22 +19,33 @@
               </tr>
             </thead>
             <tbody>
-              <%
-              set conn=Server.CreateObject("ADODB.Connection")
-              conn.Provider="Microsoft.Jet.OLEDB.4.0"
-              conn.Open "C:\inetpub\wwwroot\Restaurant\restaurant.mdb"
+            <%
+            set conn=Server.CreateObject("ADODB.Connection")
+            conn.Provider="Microsoft.Jet.OLEDB.4.0"
+            conn.Open "C:\inetpub\wwwroot\Restaurant\restaurant.mdb"
 
-              RName = Request.Form("RName")
+            RName = Request.Form("RName")
+            RStaff = Request.Form("members")
+            SDate = Request.Form("Sdate")
+            EDate = Request.Form("Edate")
 
-              set rs=Server.CreateObject("ADODB.recordset")
-              rs.Open "Select * from restaurant where rName like '%'+RName", conn
+            ' RangeValue = "Select * from restaurant where rDate between  #"& SDate &"#  and  #"& EDate &"# "
+            ' Response.Write RangeValue
+            ' Response.end()
 
-              RName = rs("rName") 
-            '   Response.Write RName
-            '   Response.end()
-              %>
+            set rs=Server.CreateObject("ADODB.recordset")
+            ' rs.Open "Select rName from restaurant where rName Like '*" & RName & "*'", conn
+            ' rs.Open "Select * from restaurant where rStaff='" & RStaff & "'", conn
+            ' rs.Open "Select * from restaurant where rDate between '" #SDate# "' and '" #SDate# "'", conn
+            rs.Open "Select * from restaurant where rDate between  #"& SDate &"#  and  #"& EDate &"#", conn
+            ' rs.Open "Select * from restaurant where rDate between '"& (cast(SDate as date)as StringToDate)  &"' and '"& (cast(EDate as date)as StringToDate) &"'", conn
+            ' %'+RStaff+'%'
+            ' RName = rs("rName") 
+            ' Response.Write RName
+            ' Response.end()
+            %>
 
-              <%do until rs.EOF%>
+            <%do until rs.EOF%>
 
               <tr>
                 <form method="post" action="restaurant_update.asp">
