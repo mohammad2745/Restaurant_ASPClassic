@@ -50,7 +50,7 @@
               <tr>
                 <form method="post" action="restaurant_update.asp">
                 <%
-                for each x in rs.Fields
+                  for each x in rs.Fields
                   if lcase(x.name)="id" then%>
                     <td>
                     <input type="submit" name="ID" value="<%=x.value%>">

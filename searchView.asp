@@ -29,21 +29,20 @@
             SDate = Request.Form("Sdate")
             EDate = Request.Form("Edate")
 
-            ' RangeValue = "Select * from restaurant where rDate between  #"& SDate &"#  and  #"& EDate &"# "
-            ' Response.Write RangeValue
+            ' RangeValue = "Select rName from restaurant where rName Like '*" & RName & "*'"
+            ' sql = "SELECT * FROM restaurant WHERE Instr( rName, '" & RName & "')"
+            ' Response.Write sql
             ' Response.end()
 
             set rs=Server.CreateObject("ADODB.recordset")
-            ' rs.Open "Select rName from restaurant where rName Like '*" & RName & "*'", conn
+            rs.Open "SELECT * FROM restaurant WHERE Instr( rName, '" & RName & "')", conn
             ' rs.Open "Select * from restaurant where rStaff='" & RStaff & "'", conn
-            ' rs.Open "Select * from restaurant where rDate between '" #SDate# "' and '" #SDate# "'", conn
-            rs.Open "Select * from restaurant where rDate between  #"& SDate &"#  and  #"& EDate &"#", conn
-            ' rs.Open "Select * from restaurant where rDate between '"& (cast(SDate as date)as StringToDate)  &"' and '"& (cast(EDate as date)as StringToDate) &"'", conn
+            ' rs.Open "Select * from restaurant where rDate between  #"& SDate &"#  and  #"& EDate &"#", conn
             ' %'+RStaff+'%'
             ' RName = rs("rName") 
             ' Response.Write RName
             ' Response.end()
-            %>
+            ' %>
 
             <%do until rs.EOF%>
 
