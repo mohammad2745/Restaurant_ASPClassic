@@ -19,7 +19,7 @@
                     <select name="members" id="members">
                         <option value="1-50">1-50</option>
                         <option value="51-100">51-100</option>
-                        <option value="100-150">100-150</option>
+                        <option value="101-150">101-150</option>
                         <option value="151-200">151-200</option>
                     </select>
                 </td>

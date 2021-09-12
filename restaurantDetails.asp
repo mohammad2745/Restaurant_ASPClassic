@@ -40,6 +40,7 @@
                 ' Data Add Menu Table
                 set rs=Server.CreateObject("ADODB.recordset")
                 rs.Open "SELECT MAX(ID) as id FROM restaurant", conn
+                
 
                 id=rs("ID")
                 rs.close
@@ -54,6 +55,7 @@
                   on error resume next
                   conn.Execute sql,recaffected
               next
+
                 if err<>0 then
                   Response.Write("No update permissions!")
                 else
