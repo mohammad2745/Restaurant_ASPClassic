@@ -15,7 +15,7 @@ cid=Request.Form("ID")
 if Request.form("rName")="" then
 
   set rs=Server.CreateObject("ADODB.Recordset")
-  rs.open "SELECT * FROM restaurant WHERE ID= " & cid & "",conn
+  rs.open "SELECT * FROM restaurant WHERE 'ID='" & cid & "",conn
   %>
 
   <form method="post" action="restaurant_update.asp">

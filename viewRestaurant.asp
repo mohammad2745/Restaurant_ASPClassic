@@ -57,6 +57,7 @@
                 <th scope="col">Staffs</th>
                 <th scope="col">Description</th>
                 <th scope="col">Date</th>
+                <th scope="col">Action</th>
               </tr>
             </thead>
             <tbody>
@@ -69,30 +70,32 @@
               rs.Open "Select * from restaurant", conn
               %>
 
-              <%do until rs.EOF%>
-
-              <tr>
-                <form method="post" action="restaurant_update.asp">
-                <%
-                for each x in rs.Fields
-                  if lcase(x.name)="id" then%>
-                    <td>
-                    <input type="submit" name="ID" value="<%=x.value%>">
-                    </td>
-                  <%else%>
-                    <td><%Response.Write(x.value)%></td>
-                  <%end if
-                next
+              <%
+                 do until rs.EOF
                 %>
-                </form>
-                <%rs.MoveNext%>
-              </tr>
-              
-              <%loop
-              rs.close
-              conn.close
-              %>
+                <tr>
+                    <%
+                     for each x in rs.Fields
+                        if x.name="ID" Then
+                            id = x.value
+                        end if
+                    %>
+                        <td><%Response.Write(x.value)%></td>
+                    <%
+                     next
+                     rs.MoveNext
+                    %>
+                        <td>
+                            <a href="edit.asp?id=<%Response.Write(id)%>" class="btn btn-success" >Edit
+                            <a href="delete.asp?id=<%Response.Write(id)%>" class="btn btn-danger" >Delete
+                        </td>
+                </tr>
+            <%
+             loop
+             rs.close
+             conn.close
 
+            %>
             </tbody>
           </table>
           
