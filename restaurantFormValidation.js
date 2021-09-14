@@ -39,6 +39,4 @@ function validateForm() {
         alert("Select at least one menu")
         return false;
     }
-
-
 }

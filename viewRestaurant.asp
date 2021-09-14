@@ -47,87 +47,76 @@
             </div>
         </nav>
 
-        <!-- View Data -->
-        <a class="btn btn-primary" href="welcome.asp" role="button">HOME</a>
-        <a class="btn btn-primary" href="viewRestaurant.asp" role="button">View Restaurants</a>
-        <table class="table">
-            <thead>
-                <tr>
-                    <th scope="col">Restaurant ID</th>
-                    <th scope="col">Name</th>
-                    <th scope="col">Email</th>
-                    <th scope="col">Phone</th>
-                    <th scope="col">Staffs</th>
-                    <th scope="col">Description</th>
-                    <th scope="col">Date</th>
-                    <th scope="col">Action</th>
-                </tr>
-            </thead>
-            <tbody>
-            <%
-              set conn=Server.CreateObject("ADODB.Connection")
-              conn.Provider="Microsoft.Jet.OLEDB.4.0"
-              conn.Open "C:\inetpub\wwwroot\Restaurant\restaurant.mdb"
+    <!-- View Data -->
+    <a class="btn btn-primary" href="welcome.asp" role="button">HOME</a>
+    <a class="btn btn-primary" href="viewRestaurant.asp" role="button">View Restaurants</a>
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">Restaurant ID</th>
+                <th scope="col">Name</th>
+                <th scope="col">Email</th>
+                <th scope="col">Phone</th>
+                <th scope="col">Staffs</th>
+                <th scope="col">Description</th>
+                <th scope="col">Date</th>
+                <th scope="col">Action</th>
+            </tr>
+        </thead>
+        <tbody>
+        <%  set conn=Server.CreateObject("ADODB.Connection")
+            conn.Provider="Microsoft.Jet.OLEDB.4.0"
+            conn.Open "C:\inetpub\wwwroot\Restaurant\restaurant.mdb"
 
-              set rs=Server.CreateObject("ADODB.recordset")
-              rs.Open "Select * from restaurant", conn
-            %>
+            set rs=Server.CreateObject("ADODB.recordset")
+            rs.Open "Select * from restaurant", conn %>
 
-                <%
-                 do until rs.EOF
-                %>
-                        <tr>
-                    <%
-                     for each x in rs.Fields
-                        if x.name="ID" Then
-                            id = x.value
-                        end if
-                    %>
-                                <td>
-                                    <%Response.Write(x.value)%>
-                                </td>
-                                <%
-                     next
-                     rs.MoveNext
-                    %>
-                        <td>
-                            <a href="edit.asp?id=<%Response.Write(id)%>" class="btn btn-success">Edit
-                            <a href="delete.asp?id=<%Response.Write(id)%>" class="btn btn-danger" >Delete
-                        </td>
-                </tr>
-            <%
-             loop
-             rs.close
-             conn.close
-
-            %>
-            </tbody>
-          </table>
+            <% do until rs.EOF %>
+            <tr>
+                <% for each x in rs.Fields
+                    if x.name="ID" Then
+                        id = x.value
+                    end if %>
+                <td>
+                    <%Response.Write(x.value)%>
+                </td>
+                <% next
+                rs.MoveNext %>
+                <td>
+                    <a href="edit.asp?id=<%Response.Write(id)%>" class="btn btn-success">Edit
+                    <a href="delete.asp?id=<%Response.Write(id)%>" class="btn btn-danger" >Delete
+                </td>
+            </tr>
+            <% loop
+            rs.close
+            conn.close %>
+        </tbody>
+    </table>
           
-        </div>
-    </body>
+    </div>
+</body>
 
-    <script>
-        $(document).ready(function(){
-        $('#searchButton').click(function() {
-            $.ajax({
-                    type: "POST",
-                    url: "searchView.asp",
-                    data:  $("#formID").serialize(),
-                    cache: false,
-                    dataType: "html",
-                    success: function(response){
-                        $('#searchDisplay').html(response.toString());
-                    },
-                    error: function(resposeText){
-                        alert("err");
-                    },
-                });
+<script>
+    $(document).ready(function(){
+    $('#searchButton').click(function() {
+        $.ajax({
+                type: "POST",
+                url: "searchView.asp",
+                data:  $("#formID").serialize(),
+                cache: false,
+                dataType: "html",
+                success: function(response){
+                    $('#searchDisplay').html(response.toString());
+                },
+                error: function(resposeText){
+                    alert("err");
+                },
+            });
 
-            return false;
-        });
-        });
-        
-    </script>
+        return false;
+    });
+    });
+    
+</script>
 
 </html>
