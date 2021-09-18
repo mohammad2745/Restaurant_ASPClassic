@@ -31,15 +31,15 @@
     Breakfast=Lunch=Dinner=Snacks=0
     For each x in s
     ' response.write x
-    if x="Breakfast" Then
-    Breakfast=1
-    elseif x="Lunch" Then
-    Lunch=1
-    elseif x="Dinner" Then
-    Dinner=1
-    elseif x="Snacks" Then
-    Snacks=1
-    end if
+      if x="Breakfast" Then
+      Breakfast=1
+      elseif x="Lunch" Then
+      Lunch=1
+      elseif x="Dinner" Then
+      Dinner=1
+      elseif x="Snacks" Then
+      Snacks=1
+      end if
     Next
     ' response.end
 

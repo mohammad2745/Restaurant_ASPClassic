@@ -10,7 +10,7 @@
     <div class="container" id="searchDisplay">
         <nav class="navbar navbar-expand-lg navbar-light bg-light">
             <div class="container-fluid">
-                <form id="formID">
+                <form id="formID" method="POST" action="searchView.asp">
                     <table>
                         <tr>
                             <td>
@@ -20,6 +20,7 @@
                             <td>
                                 <label for="members">Total Member</label>
                                 <select name="members" id="members">
+                                    <option value>--</option>
                                     <option value="1-50">1-50</option>
                                     <option value="51-100">51-100</option>
                                     <option value="101-150">101-150</option>
@@ -53,12 +54,10 @@
     <table class="table">
         <thead>
             <tr>
-                <th scope="col">Restaurant ID</th>
                 <th scope="col">Name</th>
                 <th scope="col">Email</th>
                 <th scope="col">Phone</th>
                 <th scope="col">Staffs</th>
-                <th scope="col">Description</th>
                 <th scope="col">Date</th>
                 <th scope="col">Action</th>
             </tr>
@@ -71,25 +70,33 @@
             set rs=Server.CreateObject("ADODB.recordset")
             rs.Open "Select * from restaurant", conn %>
 
-            <% do until rs.EOF %>
-            <tr>
-                <% for each x in rs.Fields
-                    if x.name="ID" Then
-                        id = x.value
-                    end if %>
+            <%
+            do until rs.EOF
+
+            response.write("<tr><td>" & rs.Fields("rName") &"</td>")
+            response.write("<td>" & rs.Fields("rEmail") &"</td>")
+            response.write("<td>" & rs.Fields("rPhone") &"</td>")
+            response.write("<td>" & rs.Fields("rStaff") &"</td>")
+            response.write("<td>" & rs.Fields("rDate") &"</td>")
+            for each x in rs.Fields
+                if lcase(x.name)="id" then
+                id = x.value
+                %>
                 <td>
-                    <%Response.Write(x.value)%>
-                </td>
-                <% next
-                rs.MoveNext %>
-                <td>
-                    <a href="edit.asp?id=<%Response.Write(id)%>" class="btn btn-success">Edit
-                    <a href="delete.asp?id=<%Response.Write(id)%>" class="btn btn-danger" >Delete
-                </td>
-            </tr>
-            <% loop
-            rs.close
-            conn.close %>
+                <a href="edit.asp?id=<%Response.Write(id)%>" class="btn btn-success" >Edit</a>
+                <button id="delete" class="btn btn-danger"> Delete</button> </td>
+                
+                <%
+                else%>
+            <%
+            end if
+            next
+            rs.MoveNext
+            loop
+            response.write("</table>")
+            conn.close
+            %>
+            
         </tbody>
     </table>
           

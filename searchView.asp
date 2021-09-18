@@ -24,25 +24,41 @@
         <%  set conn=Server.CreateObject("ADODB.Connection")
         conn.Provider="Microsoft.Jet.OLEDB.4.0"
         conn.Open "C:\inetpub\wwwroot\Restaurant\restaurant.mdb"
+        set rs=Server.CreateObject("ADODB.recordset")
 
         RName = Request.Form("RName")
         RStaff = Request.Form("members")
         SDate = Request.Form("Sdate")
         EDate = Request.Form("Edate")
 
-        ' RangeValue = "Select rName from restaurant where rName Like '*" & RName & "*'"
-        ' sql = "SELECT * FROM restaurant WHERE Instr( rName, '" & RName & "') and rStaff ='" & RStaff & "' AND rDate between  #"& SDate &"#  and  #"& EDate &"#"
-        ' Response.Write sql
-        ' Response.end()
+        Search = ""
+        if SDate <> "" or EDate <> "" OR rName <> "" OR rStaff <> "" then
+          ' -------Date-----------
+          if SDate <> "" AND EDate <> "" then
+            Search = Search & "rDate between #"& SDate &"#  and  #"& EDate &"#"
+          elseif SDate <> "" AND EDate = "" then
+            Search = Search & "rDate between #"& SDate &"#  and (select max(rDate) from restaurant)"
+          elseif SDate = "" AND EDate <> "" then
+            Search = Search & "rDate between (select min(rDate) from restaurant) and #"& EDate &"#"
+          end if
 
-        set rs=Server.CreateObject("ADODB.recordset")
-        rs.Open "SELECT * FROM restaurant WHERE Instr( rName, '" & RName & "') and rStaff ='" & RStaff & "' AND rDate between  #"& SDate &"#  and  #"& EDate &"#", conn
-        ' rs.Open "Select * from restaurant where rStaff='" & RStaff & "'", conn
-        ' rs.Open "Select * from restaurant where rDate between  #"& SDate &"#  and  #"& EDate &"#", conn
-        ' %'+RStaff+'%'
-        ' RName = rs("rName") 
-        ' Response.Write RName
-        ' Response.end()
+          ' --------Name-----------
+          if rName <> "" then
+            Search = Search & " and Instr( rName, '" & RName & "')"
+          end if
+
+          ' ---------Staffs--------
+          if rStaff <> "" then 
+            Search = Search & " and rStaff = '" & RStaff & "'"
+          end if
+          rs.open "select * from restaurant where "&Search&" ", conn
+          ' sql = "select * from restaurant where "&Search&" "
+          ' Response.Write sql
+          ' Response.end()
+
+        else
+          rs.open "select * from restaurant", conn
+        end if
         ' %>
 
         <%do until rs.EOF%>
