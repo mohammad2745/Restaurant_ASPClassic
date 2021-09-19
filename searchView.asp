@@ -32,24 +32,59 @@
         EDate = Request.Form("Edate")
 
         Search = ""
+        Count = 0
         if SDate <> "" or EDate <> "" OR rName <> "" OR rStaff <> "" then
           ' -------Date-----------
           if SDate <> "" AND EDate <> "" then
-            Search = Search & "rDate between #"& SDate &"#  and  #"& EDate &"#"
+            Count = Count + 1
+
+            if Count <> 1 then
+              Search = Search & " and rDate between #"& SDate &"#  and  #"& EDate &"#"
+            else
+              Search = Search & "rDate between #"& SDate &"#  and  #"& EDate &"#"
+            end if
+
           elseif SDate <> "" AND EDate = "" then
-            Search = Search & "rDate between #"& SDate &"#  and (select max(rDate) from restaurant)"
+            Count = Count + 1
+
+            if Count <> 1 then
+              Search = Search & " and rDate between #"& SDate &"#  and (select max(rDate) from restaurant)"
+            else
+              Search = Search & "rDate between #"& SDate &"#  and (select max(rDate) from restaurant)"
+            end if
+
           elseif SDate = "" AND EDate <> "" then
-            Search = Search & "rDate between (select min(rDate) from restaurant) and #"& EDate &"#"
+            Count = Count + 1
+            
+            if Count <> 1 then
+              Search = Search & " and rDate between (select min(rDate) from restaurant) and #"& EDate &"#"
+            else 
+              Search = Search & "rDate between (select min(rDate) from restaurant) and #"& EDate &"#"
+            end if
+
           end if
 
           ' --------Name-----------
           if rName <> "" then
-            Search = Search & " and Instr( rName, '" & RName & "')"
+            Count = Count + 1
+
+            if Count <> 1 then
+              Search = Search & " and Instr( rName, '" & RName & "')"
+            else
+              Search = Search & "Instr( rName, '" & RName & "')"
+            end if
           end if
 
           ' ---------Staffs--------
-          if rStaff <> "" then 
-            Search = Search & " and rStaff = '" & RStaff & "'"
+          if rStaff <> "" then
+          Count = Count + 1
+
+            if Count <> 1 then 
+              Search = Search & " and rStaff = '" & RStaff & "'"
+            else
+              Search = Search & "rStaff = '" & RStaff & "'"
+            end if
+
           end if
           rs.open "select * from restaurant where "&Search&" ", conn
           ' sql = "select * from restaurant where "&Search&" "
