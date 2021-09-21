@@ -6,7 +6,7 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 </head>
 
-<body>
+<body id="formSet">
     <div class="container" id="searchDisplay">
         <nav class="navbar navbar-expand-lg navbar-light bg-light">
             <div class="container-fluid">
@@ -63,39 +63,50 @@
             </tr>
         </thead>
         <tbody>
-        <%  set conn=Server.CreateObject("ADODB.Connection")
+          <%set conn=Server.CreateObject("ADODB.Connection")
             conn.Provider="Microsoft.Jet.OLEDB.4.0"
             conn.Open "C:\inetpub\wwwroot\Restaurant\restaurant.mdb"
 
+            set rs1=Server.CreateObject("ADODB.recordset")
+            ' rs1.open "select count (ID) as id from restaurant",conn
+            ' sql = rs1("id")
+            ' rs1.close
+            ' Response.Write sql
+            ' Response.end()
+
             set rs=Server.CreateObject("ADODB.recordset")
-            rs.Open "Select * from restaurant", conn %>
+            rs.Open "Select id, rName, rEmail, rPhone, rStaff, rDate from restaurant", conn %>
 
             <%
-            do until rs.EOF
+              If Not rs.EOF Then 
+                  data = rs.GetRows()
+              end if
 
-            response.write("<tr><td>" & rs.Fields("rName") &"</td>")
-            response.write("<td>" & rs.Fields("rEmail") &"</td>")
-            response.write("<td>" & rs.Fields("rPhone") &"</td>")
-            response.write("<td>" & rs.Fields("rStaff") &"</td>")
-            response.write("<td>" & rs.Fields("rDate") &"</td>")
-            for each x in rs.Fields
-                if lcase(x.name)="id" then
-                id = x.value
-                %>
-                <td>
-                <a href="edit.asp?id=<%Response.Write(id)%>" class="btn btn-success" >Edit</a>
-                <button id="delete" class="btn btn-danger"> Delete</button> </td>
+              Dim row, rows
+
+              If IsArray(data) Then
+                rows = UBound(data, 2)
+                For row = 0 To rows
+                  id = data(0, row)
                 
-                <%
-                else%>
-            <%
-            end if
-            next
-            rs.MoveNext
-            loop
-            response.write("</table>")
-            conn.close
             %>
+                <tr style='background: none;' id="<%=(id)%>">
+                    <td><%=(data(1, row))%></td>
+                    <td><%=(data(2, row))%></td>
+                    <td><%=(data(3, row))%></td>
+                    <td><%=(data(4, row))%></td>
+                    <td><%=(data(5, row))%></td>
+                    <td>
+                      <a href="edit.asp?id=<%Response.Write(id)%>" class="btn btn-success" >Edit</a>
+                      <button id="delete" class="btn btn-danger" onClick=deleteRow(<%Response.Write(id)%>)> Delete</button>
+                    </td>
+                </tr>
+                <%
+                    Next
+                End If
+                rs.close
+                conn.close
+                %>
             
         </tbody>
     </table>
@@ -104,26 +115,36 @@
 </body>
 
 <script>
-    $(document).ready(function(){
-    $('#searchButton').click(function() {
-        $.ajax({
-                type: "POST",
-                url: "searchView.asp",
-                data:  $("#formID").serialize(),
-                cache: false,
-                dataType: "html",
-                success: function(response){
-                    $('#searchDisplay').html(response.toString());
-                },
-                error: function(resposeText){
-                    alert("err");
-                },
-            });
+    // $(document).ready(function(){
+    // $('#searchButton').click(function() {
+    //     $.ajax({
+    //             type: "POST",
+    //             url: "searchView.asp",
+    //             data:  $("#formID").serialize(),
+    //             cache: false,
+    //             dataType: "html",
+    //             success: function(response){
+    //                 $('#searchDisplay').html(response.toString());
+    //             },
+    //             error: function(resposeText){
+    //                 alert("err");
+    //             },
+    //         });
+    //     return false;
+    // });
+    // });
 
-        return false;
-    });
-    });
+    function deleteRow(id){
+            $.ajax({
+                url: "delete.asp?id=" + id,
+                success: function(response){
+                    $("#formSet").html(response.toString());
+
+                }
+            });
+        } 
     
 </script>
 
 </html>
+

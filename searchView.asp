@@ -11,13 +11,12 @@
     <table class="table">
         <thead>
             <tr>
-                <th scope="col">Restaurant ID</th>
                 <th scope="col">Name</th>
                 <th scope="col">Email</th>
                 <th scope="col">Phone</th>
                 <th scope="col">Staffs</th>
-                <th scope="col">Description</th>
                 <th scope="col">Date</th>
+                <th scope="col">Action</th>
             </tr>
         </thead>
         <tbody>
@@ -26,96 +25,78 @@
         conn.Open "C:\inetpub\wwwroot\Restaurant\restaurant.mdb"
         set rs=Server.CreateObject("ADODB.recordset")
 
+        ' Form Data 
         RName = Request.Form("RName")
         RStaff = Request.Form("members")
         SDate = Request.Form("Sdate")
         EDate = Request.Form("Edate")
 
+        ' Search Data 
         Search = ""
-        Count = 0
-        if SDate <> "" or EDate <> "" OR rName <> "" OR rStaff <> "" then
-          ' -------Date-----------
-          if SDate <> "" AND EDate <> "" then
-            Count = Count + 1
+        ' -------Date-----------
+        if SDate <> "" AND EDate <> "" then
+          Search = Search & "rDate between #"& SDate &"#  and  #"& EDate &"#"
 
-            if Count <> 1 then
-              Search = Search & " and rDate between #"& SDate &"#  and  #"& EDate &"#"
-            else
-              Search = Search & "rDate between #"& SDate &"#  and  #"& EDate &"#"
-            end if
+        elseif SDate <> "" AND EDate = "" then    
+          Search = Search & "rDate >=  #"& SDate &"#  "
 
-          elseif SDate <> "" AND EDate = "" then
-            Count = Count + 1
-
-            if Count <> 1 then
-              Search = Search & " and rDate between #"& SDate &"#  and (select max(rDate) from restaurant)"
-            else
-              Search = Search & "rDate between #"& SDate &"#  and (select max(rDate) from restaurant)"
-            end if
-
-          elseif SDate = "" AND EDate <> "" then
-            Count = Count + 1
-            
-            if Count <> 1 then
-              Search = Search & " and rDate between (select min(rDate) from restaurant) and #"& EDate &"#"
-            else 
-              Search = Search & "rDate between (select min(rDate) from restaurant) and #"& EDate &"#"
-            end if
-
-          end if
-
-          ' --------Name-----------
-          if rName <> "" then
-            Count = Count + 1
-
-            if Count <> 1 then
-              Search = Search & " and Instr( rName, '" & RName & "')"
-            else
-              Search = Search & "Instr( rName, '" & RName & "')"
-            end if
-          end if
-
-          ' ---------Staffs--------
-          if rStaff <> "" then
-          Count = Count + 1
-
-            if Count <> 1 then 
-              Search = Search & " and rStaff = '" & RStaff & "'"
-            else
-              Search = Search & "rStaff = '" & RStaff & "'"
-            end if
-
-          end if
-          rs.open "select * from restaurant where "&Search&" ", conn
-          ' sql = "select * from restaurant where "&Search&" "
-          ' Response.Write sql
-          ' Response.end()
-
-        else
-          rs.open "select * from restaurant", conn
+        elseif SDate = "" AND EDate <> "" then 
+          Search = Search & "rDate <= #"& EDate &"#"
         end if
-        ' %>
 
-        <%do until rs.EOF%>
-        <tr>
-          <form method="post" action="restaurant_update.asp">
-            <% for each x in rs.Fields
-          if lcase(x.name)="id" then%>
-          <td>
-              <input type="submit" name="ID" value="<%=x.value%>">
-          </td>
-          <%else%>
-          <td>
-              <%Response.Write(x.value)%>
-          </td>
-          <%end if
-          next %>
-          </form>
-          <%rs.MoveNext%>
-        </tr>
-        <%loop
-        rs.close
-        conn.close %>
+        ' --------Name-----------
+        if RName <> "" then
+          if Search <> "" Then
+            Search = Search &  " and "
+          End If
+          Search = Search & " Instr( rName, '" & RName & "')"
+        end if       
+
+        ' ---------Staffs--------
+        if RStaff <> "" then
+          if Search <> "" Then
+            Search = Search &  " and "
+          End If
+          Search = Search & " rStaff='"& RStaff &"'"
+        end if 
+
+        if Search <> "" Then
+          Search = " where " & Search
+        End If
+        rs.open "Select id, rName, rEmail, rPhone, rStaff, rDate from restaurant "&Search&" ", conn
+        ' sql = "Select id, rName, rEmail, rPhone, rStaff, rDate from restaurant "&Search&" "
+        ' Response.Write sql
+        ' Response.end()
+        %>
+
+        <%
+          If Not rs.EOF Then 
+              data = rs.GetRows()
+          end if
+
+          Dim row, rows
+
+          If IsArray(data) Then
+            rows = UBound(data, 2)
+            For row = 0 To rows
+              id = data(0, row)       
+        %>
+              <tr style='background: none;' id="<%=(id)%>">
+                  <td><%=(data(1, row))%></td>
+                  <td><%=(data(2, row))%></td>
+                  <td><%=(data(3, row))%></td>
+                  <td><%=(data(4, row))%></td>
+                  <td><%=(data(5, row))%></td>
+                  <td>
+                    <a href="edit.asp?id=<%Response.Write(id)%>" class="btn btn-success" >Edit</a>
+                    <button id="delete" class="btn btn-danger" onClick=deleteRow(<%Response.Write(id)%>)> Delete</button>
+                  </td>
+              </tr>
+          <%Next
+          End If
+          rs.close
+          conn.close%>
+        
       </tbody>
     </table>
   </div>

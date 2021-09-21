@@ -9,33 +9,25 @@
     <div class="container">
         <a class="btn btn-success" href="login.asp" role="button">Login</a>
         <h3>Signup</h3>
-        <form method="POST" action="login.asp">
+        <form method="POST" action="signupValidation.asp">
             <div class="mb-3">
                 <label for="exampleInputfirstname" class="form-label">First Name</label>
-                <input type="text" class="form-control" id="exampleInputfirstname" name="fullName">
+                <input type="text" class="form-control" id="exampleInputfirstname" name="fName">
             </div>
 
             <div class="mb-3">
                 <label for="exampleInputlastname" class="form-label">Last Name</label>
-                <input type="text" class="form-control" id="exampleInputlastname" name="fullName">
+                <input type="text" class="form-control" id="exampleInputlastname" name="lName">
             </div>
 
             <div class="mb-3">
                 <label for="exampleInputEmail1" class="form-label">Email address</label>
-                <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
+                <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" name="email">
             </div>
 
             <div class="mb-3">
                 <label for="exampleInputPassword1" class="form-label">Password</label>
-                <input type="password" class="form-control" id="exampleInputPassword1">
-            </div>
-
-            <div class="mb-3">
-                <label for="exampleInputname" class="form-label">Gender: </label>
-                <input type="radio" id="male" name="gender" value="Male">
-                <label for="male">Male</label>
-                <input type="radio" id="female" name="gender" value="Female">
-                <label for="female">Female</label><br>
+                <input type="password" class="form-control" id="exampleInputPassword1" name="password">
             </div>
 
             <button type="submit" class="btn btn-primary">Submit</button>

@@ -14,20 +14,20 @@
     set rs=Server.CreateObject("ADODB.Recordset")
     rs.open "SELECT * FROM restaurant WHERE ID=" & id,conn
 
-
     staff = rs("rStaff")
     ' Response.Write staff
     ' Response.end
 
     set rs1=Server.CreateObject("ADODB.Recordset")
     rs1.open "SELECT resMenu FROM menu WHERE ResID=" & id,conn
+
     ' menur= rs1("resMenu")
     ' Response.Write menur
     ' Response.end
 
     Dim s
     s = rs1.GetRows()
-
+    
     Breakfast=Lunch=Dinner=Snacks=0
     For each x in s
     ' response.write x

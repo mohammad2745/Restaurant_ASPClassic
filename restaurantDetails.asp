@@ -24,6 +24,38 @@
         conn.Provider="Microsoft.Jet.OLEDB.4.0"
         conn.Open "C:\inetpub\wwwroot\Restaurant\restaurant.mdb"
 
+        RName = Request.Form("restaurantName")
+        REmail =Request.Form("restaurantEmail")
+        RPhone = Request.Form("restaurantPhone")
+        RMember =Request.Form("members")
+        RDate = Request.Form("date")
+
+        Error = ""
+        if RName = "" then
+          Error = Error & "Name "
+        end if
+
+        if REmail = "" then
+          Error = Error & " Email"
+        end if
+
+        if RPhone = "" then
+          Error = Error & " Phone No"
+        end if
+
+        if RMember = "" then
+          Error = Error & " Member"
+        end if
+
+        if RDate = "" then
+          Error = Error & " Date"
+        end if
+        
+        if Error <> "" then
+          Response.Write "Error: " &TError& "is not valid"
+          Response.end()
+        end if
+      
         sql="INSERT INTO restaurant (rName,rEmail,rPhone,rStaff,rDescription,rDate) "
         sql=sql & " VALUES "
         sql=sql & "('" & Request.Form("restaurantName") & "',"

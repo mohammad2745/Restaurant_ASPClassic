@@ -8,7 +8,7 @@
 <body>
   <div class="container">
   <h3>Create Restaurant:</h3>
-    <form method="POST" action="restaurantDetails.asp" name="Res" onsubmit="return validateForm()";>
+    <form method="POST" action="restaurantDetails.asp" name="Res" >
 
       <div class="mb-3">
         <label for="exampleInputname" class="form-label">Restaurant Name</label>
