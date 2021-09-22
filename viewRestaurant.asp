@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<!--#include file ="session.asp"-->
 <html>
 
 <head>
@@ -51,6 +52,8 @@
     <!-- View Data -->
     <a class="btn btn-primary" href="welcome.asp" role="button">HOME</a>
     <a class="btn btn-primary" href="viewRestaurant.asp" role="button">View Restaurants</a>
+    <a class="btn btn-warning" href="logout.asp" role="button">Logout</a>
+    <p>Welcome <%Response.Write(Session("fName"))%></p>
     <table class="table">
         <thead>
             <tr>
@@ -115,24 +118,24 @@
 </body>
 
 <script>
-    // $(document).ready(function(){
-    // $('#searchButton').click(function() {
-    //     $.ajax({
-    //             type: "POST",
-    //             url: "searchView.asp",
-    //             data:  $("#formID").serialize(),
-    //             cache: false,
-    //             dataType: "html",
-    //             success: function(response){
-    //                 $('#searchDisplay').html(response.toString());
-    //             },
-    //             error: function(resposeText){
-    //                 alert("err");
-    //             },
-    //         });
-    //     return false;
-    // });
-    // });
+    $(document).ready(function(){
+    $('#searchButton').click(function() {
+        $.ajax({
+                type: "POST",
+                url: "searchView.asp",
+                data:  $("#formID").serialize(),
+                cache: false,
+                dataType: "html",
+                success: function(response){
+                    $('#searchDisplay').html(response.toString());
+                },
+                error: function(resposeText){
+                    alert("err");
+                },
+            });
+        return false;
+    });
+    });
 
     function deleteRow(id){
             $.ajax({

@@ -12,36 +12,45 @@
 
     ' Form Data 
     Email = Request.Form("email")
-    password = Request.Form("password")
+    Password = Request.Form("password")
 
-    set rs=Server.CreateObject("ADODB.recordset")
-    if Email <> "" and password <>"" then
-      sql="select email, password from registration where email='" & Email& "' and [password]='" & password & "'"
-    else
-      Response.write("Fill all data")
+    ' Data Validation 
+    msg = ""
+    set regEx = New RegExp
+    regEx.Pattern = "^[-+.\w]{1,64}@[-.\w]{1,64}\.[-.\w]{2,6}$"
+    isValidE = regEx.Test(Email)
+    if isValidE="False" Then
+        msg = msg + "Enter a valid e-mail address<br>"
     end if
 
-    ' Response.Write sql
-    ' Response.end()
+    if Password="" Then
+        msg = msg + "Enter Password<br>"
+    end if
 
+    if msg<>"" Then 
+        response.write(msg)
+        response.end
+    end if
+
+    set rs=Server.CreateObject("ADODB.recordset")
+
+    ' rs.open "select email,password from registration where email='" & Email& "'", conn
+    sql = "select id,fName,email,password from registration where email='" & Email& "'"
     rs.open sql, conn
 
     if not rs.EOF  then 
-    response.redirect "viewRestaurant.asp"
+      IF rs("password") <> Password then
+        response.Write "<h4> PASSWORD IS NOT VALID </h4>"
+        response.end()
+      else
+        Response.Cookies("id")=rs("id")
+        Session("fName")=rs("fName")
+        response.redirect "viewRestaurant.asp"
+      end if
     else
-    response.Write "<h4> USER NAME & PASSWORD IS NOT MATCHING </h4>"
+      response.Write "<h4> EMAIL IS NOT VALID </h4>"
+      response.end()
     end if
-    %>
-    <%
-    ' <div class="container">
-    '     <p>Welcome
-    '         
-    '         response.write(request.form("fullName"))
-    '         
-    '     </p>
-    '     <a class="btn btn-primary" href="createRestaurant.asp" role="button">Add Restaurant</a>
-    '     <a class="btn btn-primary" href="viewRestaurant.asp" role="button">View Restaurants</a>
-    ' </div>
     %>
   </body>
 </html>
