@@ -1,61 +1,52 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Update</title>
-</head>
-<body>
+<!--#include virtual="\class\c_data_batch.asp"-->
+<%
+set ObjData = new c_Data
+ObjData.OpenConnection "prjSultan",strErr
 
-    <%
-    set conn=Server.CreateObject("ADODB.Connection")
-    conn.Provider="Microsoft.Jet.OLEDB.4.0"
-    conn.Open "C:\inetpub\wwwroot\Restaurant\restaurant.mdb"
+id = Request.QueryString("id")
 
-    id = Request.QueryString("id")
+sql="UPDATE restaurant SET "
+sql=sql & "rName='" & Request.Form("restaurantName") & "',"
+sql=sql & "rEmail='" & Request.Form("restaurantEmail") & "',"
+sql=sql & "rPhone='" & Request.Form("restaurantPhone") & "',"
+sql=sql & "rStaff='" & Request.Form("members") & "',"
+sql=sql & "rDescription='" & Request.Form("description") & "',"
+sql=sql & "rDate='" & Request.Form("date") & "'"
+sql=sql & " WHERE ID=" & id & ""
 
-    sql="UPDATE restaurant SET "
-    sql=sql & "rName='" & Request.Form("restaurantName") & "',"
-    sql=sql & "rEmail='" & Request.Form("restaurantEmail") & "',"
-    sql=sql & "rPhone='" & Request.Form("restaurantPhone") & "',"
-    sql=sql & "rStaff='" & Request.Form("members") & "',"
-    sql=sql & "rDescription='" & Request.Form("description") & "',"
-    sql=sql & "rDate='" & Request.Form("date") & "'"
-    sql=sql & " WHERE ID=" & id & ""
-    on error resume next
-    conn.Execute sql
+ObjData.BeginTransaction strErr 
+    ObjData.ExecuteQuery sql,strErr
 
-    ' Response.Write sql
-    ' Response.end
-    
+menus = Split(Request.Form("menu"),", ")
 
-    v = Split(Request.Form("menu"),", ")
-    
 
-    sql1="DELETE * FROM menu"
-    sql1=sql1 & " WHERE ResID=" & id & ""
-    on error resume next
-    conn.Execute sql1
+sql1="DELETE * FROM menu"
+sql1=sql1 & " WHERE ResID=" & id & ""
 
-    for each x in v
-        sql2="INSERT INTO menu (resMenu,ResID)"
-        sql2=sql2 & " VALUES "
-        sql2=sql2 & "('" & x & "',"
-        sql2=sql2 & "" & id & ")"
-        on error resume next
-        conn.Execute sql2
+    ObjData.ExecuteQuery sql1,strErr
+
+for each menu in menus
+      sql2="INSERT INTO menu (resMenu,ResID)"
+      sql2=sql2 & " VALUES "
+      sql2=sql2 & "('" & menu & "',"
+      sql2=sql2 &  id & ")"
+
+      ObjData.ExecuteQuery sql2,strErr
     next
 
-    
-    'response.end()
-    
-    if err<>0 then
-        response.write("No update permissions!")
-    else
-        Response.Redirect "viewRestaurant.asp"
-    end if
-    conn.close
-    %>
-   
-</body>
-</html>
+If strErr = "" Then
+  ObjData.CommitTransaction strErr 
+Else 
+  ObjData.RollbackTansaction strErr 
+End if
+
+
+'response.end()
+
+if err<>0 then
+    response.write("No update permissions!")
+else
+    Response.Redirect "viewRestaurant.asp"
+end if
+conn.close
+%>

@@ -1,37 +1,29 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Delete</title>
-</head>
-<body>
-    <%
-    set conn=Server.CreateObject("ADODB.Connection")
-    conn.Provider="Microsoft.Jet.OLEDB.4.0"
-    conn.Open "C:\inetpub\wwwroot\Restaurant\restaurant.mdb"
+<!--#include virtual="\class\c_data_batch.asp"-->
+<%
+set ObjData = new c_Data
+ObjData.OpenConnection "prjSultan",strErr
 
-    id = Request.QueryString("id")
+id = Request.QueryString("id")
 
-    sql="DELETE FROM restaurant"
-    sql=sql & " WHERE ID=" & id & ""
+sql="DELETE FROM restaurant"
+sql=sql & " WHERE ID=" & id & ""
+ObjData.BeginTransaction strErr 
+  ObjData.ExecuteQuery sql,strErr
 
-    'response.write sql
-    'response.end()
-    on error resume next
-    conn.Execute sql
+sql1="DELETE FROM menu"
+sql1=sql1 & " WHERE ResID=" & id & ""
+  ObjData.ExecuteQuery sql1,strErr
 
-    sql1="DELETE FROM menu"
-    sql1=sql1 & " WHERE ResID=" & id & ""
-    on error resume next
-    conn.Execute sql1
+If strErr = "" Then
+  ObjData.CommitTransaction strErr 
+Else 
+  ObjData.RollbackTansaction strErr 
+End if
 
-    if err<>0 then
-        response.write("No update permissions!")
-    else
-        Response.Redirect "viewRestaurant.asp"
-    end if
-    conn.close
-    %>
-</body>
-</html>
+if err<>0 then
+    response.write("No update permissions!")
+else
+    Response.Redirect "viewRestaurant.asp"
+end if
+conn.close
+%>

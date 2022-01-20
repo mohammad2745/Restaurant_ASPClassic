@@ -1,4 +1,9 @@
 <!DOCTYPE html>
+<!--#include file ="session.asp"-->
+<!--#include virtual="\class\c_data_batch.asp"-->
+<%
+  set ObjData = new c_Data
+%>
 <html>
 <head>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3B09zVXn8CA5QIVfZOJ3BCsw2P0p/We" crossorigin="anonymous">
@@ -7,6 +12,25 @@
     
 <body>
   <div class="container">
+  <!-- NAVBAR -->
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="collapse navbar-collapse" id="navbarNavDropdown">
+      <ul class="navbar-nav">
+        <li class="nav-item active">
+          <a class="nav-link" href="#">Welcome <span class="sr-only"><%Response.Write(Session("fName"))%></span></a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link " href="welcome.asp" role="button">HOME</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link " href="viewRestaurant.asp" role="button">View Restaurant</a>
+        </li>
+      </ul>
+      <span class="navbar-text">
+        <a class="btn btn-warning" href="logout.asp" role="button">Logout</a>
+      </span>
+    </div>
+  </nav> 
   <h3>Create Restaurant:</h3>
     <form method="POST" action="restaurantDetails.asp" name="Res" >
 

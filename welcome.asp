@@ -1,56 +1,46 @@
-<!DOCTYPE html>
-<html>
+<!doctype html>
+<!--#include virtual="\class\c_data_batch.asp"-->
+<!--#include file ="session.asp"-->
+<html lang="en">
   <head>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3B09zVXn8CA5QIVfZOJ3BCsw2P0p/We" crossorigin="anonymous">
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU" crossorigin="anonymous">
+
+    <title>Restaurant</title>
   </head>
-  
   <body>
-    <%
-    set conn=Server.CreateObject("ADODB.Connection")
-    conn.Provider="Microsoft.Jet.OLEDB.4.0"
-    conn.Open "C:\inetpub\wwwroot\Restaurant\restaurant.mdb"
+  <div class="container">
+    <!-- NAVBAR -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <div class="container-fluid">
+        <div class="collapse navbar-collapse" id="navbarText">
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            <li class="nav-item">
+              <p class="text-start">Welcome <%Response.Write(Session("fName"))%></p>
+            </li>
+          </ul>
+          <span class="navbar-text">
+            <a class="btn btn-warning" href="logout.asp" role="button">Logout</a>
+          </span>
+        </div>
+      </div>
+    </nav>
 
-    ' Form Data 
-    Email = Request.Form("email")
-    Password = Request.Form("password")
+    <!-- BODY -->
+    <a class="btn btn-info" href="CreateRestaurant.asp" role="button">Add Restaurants</a>
+    <a class="btn btn-info"" href="viewRestaurant.asp" role="button">View Restaurants</a>
+    </div>
 
-    ' Data Validation 
-    msg = ""
-    set regEx = New RegExp
-    regEx.Pattern = "^[-+.\w]{1,64}@[-.\w]{1,64}\.[-.\w]{2,6}$"
-    isValidE = regEx.Test(Email)
-    if isValidE="False" Then
-        msg = msg + "Enter a valid e-mail address<br>"
-    end if
+    <!-- Option 1: Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-/bQdsTh/da6pkI1MST/rWKFNjaCP5gBSY4sEBT38Q/9RBh9AH40zEOg7Hlq2THRZ" crossorigin="anonymous"></script>
 
-    if Password="" Then
-        msg = msg + "Enter Password<br>"
-    end if
-
-    if msg<>"" Then 
-        response.write(msg)
-        response.end
-    end if
-
-    set rs=Server.CreateObject("ADODB.recordset")
-
-    ' rs.open "select email,password from registration where email='" & Email& "'", conn
-    sql = "select id,fName,email,password from registration where email='" & Email& "'"
-    rs.open sql, conn
-
-    if not rs.EOF  then 
-      IF rs("password") <> Password then
-        response.Write "<h4> PASSWORD IS NOT VALID </h4>"
-        response.end()
-      else
-        Response.Cookies("id")=rs("id")
-        Session("fName")=rs("fName")
-        response.redirect "viewRestaurant.asp"
-      end if
-    else
-      response.Write "<h4> EMAIL IS NOT VALID </h4>"
-      response.end()
-    end if
-    %>
+    <!-- Option 2: Separate Popper and Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js" integrity="sha384-W8fXfP3gkOKtndU4JGtKDvXbO53Wy8SZCQHczT5FMiiqmQfUpWbYdTil/SxwZgAN" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.min.js" integrity="sha384-skAcpIdS7UcVUC05LJ9Dxay8AXcDYfBJqt1CJ85S/CFujBsIzCIv+l9liuYLaMQ/" crossorigin="anonymous"></script>
+  
   </body>
 </html>

@@ -10,7 +10,7 @@
   <div class="container">
     <a class="btn btn-success" href="signup.asp" role="button">Sign Up</a>
     <h3>Log In</h3>
-    <form method="POST" action="welcome.asp">
+    <form method="POST" action="loginValidation.asp">
 
       <div class="mb-3">
         <label for="exampleInputEmail1" class="form-label">Email address</label>

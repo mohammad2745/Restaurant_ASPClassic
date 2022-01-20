@@ -35,7 +35,7 @@ function validateForm() {
     var dinner = document.getElementById("dinner");
     var snacks = document.getElementById("snacks");
 
-    if (breakfast.checked == false && lunch.checked == false && dinner.checked == false && snacks.checked == false) {
+    if (breakfast.checked == false || lunch.checked == false || dinner.checked == false || snacks.checked == false) {
         alert("Select at least one menu")
         return false;
     }

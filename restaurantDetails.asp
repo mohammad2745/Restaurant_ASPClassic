@@ -1,108 +1,109 @@
-<!DOCTYPE html>
-<html>
-<head>
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3B09zVXn8CA5QIVfZOJ3BCsw2P0p/We" crossorigin="anonymous">
-</head>
-<body>
-  <div class="container">
-    <a class="btn btn-primary" href="welcome.asp" role="button">HOME</a>
-    <a class="btn btn-primary" href="viewRestaurant.asp" role="button">View Restaurants</a>
-    <table class="table">
-      <thead>
-        <tr>
-          <th scope="col">Name</th>
-          <th scope="col">Email</th>
-          <th scope="col">Phone</th>
-          <th scope="col">Staffs</th>
-          <th scope="col">Description</th>
-          <th scope="col">Date</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-        <%set conn=Server.CreateObject("ADODB.Connection")
-        conn.Provider="Microsoft.Jet.OLEDB.4.0"
-        conn.Open "C:\inetpub\wwwroot\Restaurant\restaurant.mdb"
+<%
+    ' server side validation
+  RName = Request.Form("restaurantName")
+  REmail =Request.Form("restaurantEmail")
+  RPhone = Request.Form("restaurantPhone")
+  RMember =Request.Form("members")
+  RMenu =Request.Form("item")
+  ' Response.Write RMenu
+  ' Response.end()
+  RDescription = Request.Form("description")
+  RDate = Request.Form("date")
 
-        RName = Request.Form("restaurantName")
-        REmail =Request.Form("restaurantEmail")
-        RPhone = Request.Form("restaurantPhone")
-        RMember =Request.Form("members")
-        RDate = Request.Form("date")
+  msg = ""
+  if RName="" Then
+      msg = msg + "Enter Name<br>"
+  end if
 
-        Error = ""
-        if RName = "" then
-          Error = Error & "Name "
-        end if
+  set regEx = New RegExp
+  regEx.Pattern = "^[-+.\w]{1,64}@[-.\w]{1,64}\.[-.\w]{2,6}$"
+  isValidE = regEx.Test(REmail)
+  if isValidE="False" Then
+      msg = msg + "Enter a valid e-mail address<br>"
+  end if
 
-        if REmail = "" then
-          Error = Error & " Email"
-        end if
+  set rgEx = New RegExp
+  rgEx.Pattern = "\b[0-9]{11}\b"
+  isValidP = rgEx.Test(RPhone)
+  if isValidP="False" Then
+      msg = msg + "Enter valid phone number<br>"
+  end if
+  
+  if IsDate(RDate)="False" Then
+      msg = msg + "Enter valid date<br>"
+  end if
 
-        if RPhone = "" then
-          Error = Error & " Phone No"
-        end if
+  if RMenu ="" Then
+      msg = msg + "Enter a menu<br>"
+  end if
 
-        if RMember = "" then
-          Error = Error & " Member"
-        end if
+  if RMember="" Then
+      msg = msg + "Select staff number<br>"
+  end if
 
-        if RDate = "" then
-          Error = Error & " Date"
-        end if
-        
-        if Error <> "" then
-          Response.Write "Error: " &TError& "is not valid"
-          Response.end()
-        end if
-      
-        sql="INSERT INTO restaurant (rName,rEmail,rPhone,rStaff,rDescription,rDate) "
-        sql=sql & " VALUES "
-        sql=sql & "('" & Request.Form("restaurantName") & "',"
-        sql=sql & "'" & Request.Form("restaurantEmail") & "',"
-        sql=sql & "'" & Request.Form("restaurantPhone") & "',"
-        sql=sql & "'" & Request.Form("members") & "',"
-        sql=sql & "'" & Request.Form("description") & "',"
-        sql=sql & "'" & Request.Form("date") & "')"
+  if RDescription="" Then
+      msg = msg + "Description is empty<br>"
+  end if
 
-        'on error resume next
-        conn.Execute sql,recaffected
+  if msg<>"" Then 
+      response.write(msg)
+      response.end
+  end if
+%>
 
-        ' Data Add Menu Table
-        set rs=Server.CreateObject("ADODB.recordset")
-        rs.Open "SELECT MAX(ID) as id FROM restaurant", conn
+<!--#include virtual="\class\c_data_batch.asp"-->
+<%
+  set ObjData = new c_Data
 
+  ObjData.OpenConnection "prjSultan",strErr
 
-        id=rs("ID")
-        rs.close
+  if strErr<>"" Then
+    Response.Write("Error:" + strErr)
+    Response.End
+  End if
 
-        menu = Split(Request.Form("item"),",")
+  ' Restaurant Data Insert 
+  sql="INSERT INTO restaurant (rName,rEmail,rPhone,rStaff,rDescription,rDate) "
+  sql=sql & " VALUES "
+  sql=sql & "('" & RName & "',"
+  sql=sql & "'" & REmail & "',"
+  sql=sql & "'" & RPhone & "',"
+  sql=sql & "'" & RMember & "',"
+  sql=sql & "'" & RDescription & "',"
+  sql=sql & "'" & RDate & "')"
 
-        for each i in menu
-        sql="INSERT INTO menu (resMenu,ResID)"
-        sql=sql & " VALUES "
-        sql=sql & "('" & i & "',"
-        sql=sql & "'" & id & "')"
-        on error resume next
-        conn.Execute sql,recaffected
-        next
+  ObjData.BeginTransaction strErr 
+    ObjData.ExecuteQuery sql,strErr
 
-        if err<>0 then
-        Response.Write("No update permissions!")
-        else
-        Response.Write("<h3>" & recaffected & " record added</h3>")
-        end if
-        conn.close
-        %>
-          <td><%response.write(request.form("restaurantName"))%></td>
-          <td><%response.write(request.form("restaurantEmail"))%></td>
-          <td><%response.write(request.form("restaurantPhone"))%></td>
-          <td><%response.write(request.form("members"))%></td>
-          <td><%response.write(request.form("description"))%></td>
-          <td><%response.write(request.form("date"))%></td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-</body>
-</html>
+  ' MAX ID 
+  sqlID =  "SELECT MAX(ID) as id FROM restaurant"
+  strArr = ObjData.RetrieveData(sqlID,strErr)
+
+  id = strArr(0,0)
+
+  ' Menu Data Insert 
+    menus = Split(RMenu,", ")
+
+    for each menu in menus
+      sql1="INSERT INTO menu (resMenu,ResID)"
+      sql1=sql1 & " VALUES "
+      sql1=sql1 & "('" & menu & "',"
+      sql1=sql1 &  id & ")"
+
+      ObjData.ExecuteQuery sql1,strErr
+    next
+
+  If strErr = "" Then
+    ObjData.CommitTransaction strErr 
+  Else 
+    ObjData.RollbackTansaction strErr 
+  End if
+
+  if strErr<>"" Then
+    Response.Write("Error:" + strErr)
+    Response.End
+  End if
+  response.redirect "viewRestaurant.asp"
+
+  ObjData.CloseConnection
+%>

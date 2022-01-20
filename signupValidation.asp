@@ -1,7 +1,5 @@
-<%set conn=Server.CreateObject("ADODB.Connection")
-  conn.Provider="Microsoft.Jet.OLEDB.4.0"
-  conn.Open "C:\inetpub\wwwroot\Restaurant\restaurant.mdb"
-
+<!--#include virtual="\class\c_data_batch.asp"-->
+<%
   ' Form Data
   FName = Request.Form("fName")
   LName = Request.Form("lName")
@@ -34,6 +32,8 @@
         response.end
     end if
 
+  set ObjData = new c_Data
+  ObjData.OpenConnection "prjSultan", strErr
   ' Data Insert 
   sql="INSERT INTO registration (fName,lName,email,[password]) "
   sql=sql & " VALUES "
@@ -42,16 +42,11 @@
   sql=sql & "'" & Request.Form("Email") & "',"
   sql=sql & "'" & Request.Form("Password") & "')"
 
-  ' Response.Write sql
-  ' Response.end()
+  ObjData.ExecuteQuery sql, strErr
 
-  'on error resume next
-  conn.Execute sql,recaffected
-
-  if err<>0 then
-  Response.Write("No update permissions!")
-  else
-  response.redirect "login.asp"
+  if strErr <> "" then
+    response.write strErr
   end if
-  conn.close
+  response.redirect "login.asp"
+  ObjData.CloseConnection
 %>
